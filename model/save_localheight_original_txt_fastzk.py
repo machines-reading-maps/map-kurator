@@ -55,7 +55,7 @@ from loss import mean_absolute_error_mask, mean_absolute_percentage_error_mask
 from mymodel import model_U_VGG_Centerline_Localheight
 
 
-map_images = glob.glob('./data/test_imgs/sample_input/*.png')
+map_images = glob.glob('./data/*.png')
 
 output_path = './data/test_imgs/sample_output/'
 
