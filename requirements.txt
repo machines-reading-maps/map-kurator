@@ -1,3 +1,4 @@
 xmltodict
 requests
 shapely
+rasterio
