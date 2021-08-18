@@ -23,7 +23,7 @@ class IIIFHandler:
         self.manifest_url = manifest_url
         self.output_dir = output_dir
         self.rotation = 0
-        self.tile_size = "max"
+        self.tile_size = "full"
         self.quality = "default"
         self.img_format = "jpg"
         self.img_filename = img_filename
@@ -34,13 +34,22 @@ class IIIFHandler:
         # print(str(r.headers))
 
         response_dict = r.json()
-        # print(json.dumps(response_dict, indent=2))
+        print(json.dumps(response_dict, indent=2))
 
         self.url_prefix = response_dict['@id']
         # self.img_filename = unquote(urlparse(self.url_prefix).path).split("/")[-1]
 
         self.img_width = response_dict['width']
         self.img_height = response_dict['height']
+
+        if response_dict['profile'] is not None:
+            profile_list = response_dict['profile']
+            if type(profile_list) == list and len(profile_list) > 1:
+                profile_info = profile_list[1]
+                if 'qualities' in profile_info:
+                    if 'native' in profile_info['qualities']:
+                        self.quality = 'native'
+                        print('set to native')
 
         if response_dict['tiles'] is not None:
             tile_info = response_dict['tiles'][0]
@@ -63,9 +72,6 @@ class IIIFHandler:
 
         max_col_idx = math.ceil(self.img_width / self.tile_width)
         max_row_idx = math.ceil(self.img_height / self.tile_height)
-
-        max_col_idx = 4
-        max_row_idx = 4
 
         current_region_x = col_idx * self.tile_width
         current_region_w = self.tile_width
@@ -104,7 +110,7 @@ class IIIFHandler:
         for tile_idx in list(self.tile_info['tile_idxs'].keys()):
             url = self.tile_info['tile_idxs'][tile_idx]['url']
 
-            print(f"downloading for key {str(tile_idx)} - {url}")
+            # print(f"downloading for key {str(tile_idx)} - {url}")
 
             resp = requests.get(url)
             img = np.asarray(bytearray(resp.content), dtype=np.uint8)
@@ -144,7 +150,7 @@ class IIIFHandler:
             # paste the predicted probabilty maps to the output image
             for jdx in range(0, num_tiles_h):
                 img = self.tile_info['tile_idxs'][(idx, jdx)]['img']
-                print(f"img shape for ({idx}, {jdx}) - {img.shape}")
+                # print(f"img shape for ({idx}, {jdx}) - {img.shape}")
                 enlarged_map[jdx * self.tile_width:(jdx + 1) * self.tile_width, idx * self.tile_height:(idx + 1) * self.tile_height, :] = img
 
         map_path = os.path.join(self.output_dir, self.img_filename)
