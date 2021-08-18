@@ -110,7 +110,7 @@ class IIIFHandler:
         for tile_idx in list(self.tile_info['tile_idxs'].keys()):
             url = self.tile_info['tile_idxs'][tile_idx]['url']
 
-            # print(f"downloading for key {str(tile_idx)} - {url}")
+            print(f"downloading for key {str(tile_idx)} - {url}")
 
             resp = requests.get(url)
             img = np.asarray(bytearray(resp.content), dtype=np.uint8)
