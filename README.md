@@ -71,26 +71,28 @@ scp {USER}@{VM_HOST}:~/finetune_map_model_map_w1e50_bsize8_w1_spe200_ep50.hdf5 d
 #### WMTS
 
 ```shell
-docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm  --workdir=/map-kurator map-kurator python model/predict_annotations.py wmts --url='https://wmts.maptiler.com/aHR0cDovL3dtdHMubWFwdGlsZXIuY29tL2FIUjBjSE02THk5dFlYQnpaWEpwWlhNdGRHbHNaWE5sZEhNdWN6TXVZVzFoZW05dVlYZHpMbU52YlM4eU5WOXBibU5vTDNsdmNtdHphR2x5WlM5dFpYUmhaR0YwWVM1cWMyOXUvanNvbg/wmts' --boundary='{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-1.1248,53.9711],[-1.0592,53.9711],[-1.0592,53.9569],[-1.1248,53.9569],[-1.1248,53.9711]]]}}' --zoom=16 --dst=data/test_imgs/sample_output/
+docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm  --workdir=/map-kurator map-kurator python model/predict_annotations.py wmts --url='https://wmts.maptiler.com/aHR0cDovL3dtdHMubWFwdGlsZXIuY29tL2FIUjBjSE02THk5dFlYQnpaWEpwWlhNdGRHbHNaWE5sZEhNdWN6TXVZVzFoZW05dVlYZHpMbU52YlM4eU5WOXBibU5vTDNsdmNtdHphR2x5WlM5dFpYUmhaR0YwWVM1cWMyOXUvanNvbg/wmts' --boundary='{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-1.1248,53.9711],[-1.0592,53.9711],[-1.0592,53.9569],[-1.1248,53.9569],[-1.1248,53.9711]]]}}' --zoom=16 --dst=data/test_imgs/sample_output/ --filename=sample_filename
 ```
 
 #### IIIF
 
 ```shell
-docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm --workdir=/map-kurator map-kurator python model/predict_annotations.py iiif --url='https://map-view.nls.uk/iiif/2/12563%2F125635459/info.json' --dst=data/test_imgs/sample_output/
+docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm --workdir=/map-kurator map-kurator python model/predict_annotations.py iiif --url='https://map-view.nls.uk/iiif/2/12563%2F125635459/info.json' --dst=data/test_imgs/sample_output/ --filename=sample_filename
 ```
 
 #### Regular File
 ```shell
-docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm --workdir=/map-kurator map-kurator python model/predict_annotations.py file --src={PATH_TO_INPUT_FILE} --dst=data/test_imgs/sample_output/
+docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm --workdir=/map-kurator map-kurator python model/predict_annotations.py file --src={PATH_TO_INPUT_FILE} --dst=data/test_imgs/sample_output/ --filename=sample_filename
 ```
 
 ### Output
 
-Assuming output directory is `--dst=$OUT_DIR`, if either of the above commands ran successfully, `$OUT_DIR` will have the following files:
+Assuming output directory is `--dst=$OUT_DIR` and (optional) `--filename=my_filename`, if either of the above commands ran successfully, `$OUT_DIR` will have the following files:
 
-- `{filename}_stitched.png`: image that was passed to the model
+- `my_filename_stitched.png`: image that was passed to the model
   
-- `{filename}_predictions.png`: text regions detected by the model
+- `my_filename_predictions.png`: text regions detected by the model
   
-- `{filename}_annotations.json`: detected text region outlines represented as polygons (using [Web Annotation](https://www.w3.org/TR/annotation-model/) format) 
+- `my_filename_annotations.json`: detected text region outlines represented as polygons (using [Web Annotation](https://www.w3.org/TR/annotation-model/) format)
+
+If `--filename` is not provided, it will be generated automatically as a unique `uuid4()`

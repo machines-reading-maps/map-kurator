@@ -188,6 +188,7 @@ if __name__ == "__main__":
 
     arg_parser_common = argparse.ArgumentParser(add_help=False)
     arg_parser_common.add_argument('--dst', required=True, type=str, help='path to output annotations file')
+    arg_parser_common.add_argument('--filename', required=False, type=str, help='output filename prefix')
 
     # parser.add_argument("input_type", choices=["wmts", "iiif", "tiff", "jpeg", "png"])
     subparsers = parser.add_subparsers(dest='subcommand')
@@ -210,7 +211,10 @@ if __name__ == "__main__":
     map_path = None
     output_dir = args.dst
 
-    img_id = str(uuid.uuid4())
+    if args.filename is not None:
+        img_id = args.filename
+    else:
+        img_id = str(uuid.uuid4())
 
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
