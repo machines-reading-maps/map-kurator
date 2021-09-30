@@ -85,7 +85,11 @@ class WMTSHandler:
         tile_info = self._download_tiles(tile_info)
 
         map_path = self._generate_img(tile_info)
-        return map_path, tile_info
+
+        # update self.tile_info
+        self.tile_info = tile_info
+
+        return map_path
 
     def _download_tiles(self, tile_info):
 
@@ -148,3 +152,11 @@ class WMTSHandler:
         lat = lat_radians * 180 / math.pi
         lon = 360 * x / n - 180.0
         return (lat, lon)
+
+    def _tile2latlon_list(self, x_list, y_list):
+        n = 1 << self.zoom
+        x_list, y_list = np.array(x_list), np.array(y_list)
+        lat_radians_list = np.arctan(np.sinh(np.pi * (1.0 - 2.0 * y_list / n)))
+        lat_list = lat_radians_list * 180 / math.pi
+        lon_list = 360 * x_list / n - 180.0
+        return (lat_list, lon_list)
