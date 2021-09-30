@@ -246,9 +246,7 @@ time docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurat
 
 
     poly_list = run_model(img_id, map_path, output_dir)
-    write_annotation(img_id, output_dir, poly_list, tile_info = None)
-
-    map_id, output_dir, poly_list, tile_info 
+    annotation_file = write_annotation(img_id, output_dir, poly_list, tile_info = None)
 
     print("done")
     print(annotation_file)
