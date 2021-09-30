@@ -79,11 +79,13 @@ class WMTSHandler:
         tile_info = self._generate_tile_info(tile_idxs, min_x, min_y, url_template)
         tile_info['num_tiles_w'] = num_tiles_w
         tile_info['num_tiles_h'] = num_tiles_h
+        tile_info['min_x'] = min_x 
+        tile_info['min_y'] = min_y
 
         tile_info = self._download_tiles(tile_info)
 
         map_path = self._generate_img(tile_info)
-        return map_path
+        return map_path, tile_info
 
     def _download_tiles(self, tile_info):
 

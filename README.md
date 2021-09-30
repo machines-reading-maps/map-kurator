@@ -89,9 +89,9 @@ docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/mo
 
 Assuming output directory is `--dst=$OUT_DIR` and (optional) `--filename=my_filename`, if either of the above commands ran successfully, `$OUT_DIR` will have the following files:
 
-- `my_filename_stitched.png`: image that was passed to the model
+- `my_filename_stitched.jpg`: image that was passed to the model
   
-- `my_filename_predictions.png`: text regions detected by the model
+- `my_filename_predictions.jpg`: text regions detected by the model
   
 - `my_filename_annotations.json`: detected text region outlines represented as polygons (using [Web Annotation](https://www.w3.org/TR/annotation-model/) format)
 

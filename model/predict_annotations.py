@@ -150,9 +150,13 @@ def run_model(map_id, map_path, output_dir):
         poly_points = np.array([poly_list[i]], dtype=np.int32)
         cv2.polylines(map_img, poly_points, True, (0, 0, 255), 3)
 
-    predictions_file = os.path.join(output_dir, map_id + '_predictions.png')
+    predictions_file = os.path.join(output_dir, map_id + '_predictions.jpg')
     cv2.imwrite(predictions_file, map_img)
 
+
+    return poly_list
+
+def write_annotation(map_id, output_dir, poly_list, tile_info = None):
 
     # Generate web annotations: https://www.w3.org/TR/annotation-model/
     annotations = []
@@ -224,14 +228,14 @@ if __name__ == "__main__":
 time docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm --runtime=nvidia --gpus all  --workdir=/map-kurator map-kurator python model/predict_annotations.py wmts --url='https://wmts.maptiler.com/aHR0cDovL3dtdHMubWFwdGlsZXIuY29tL2FIUjBjSE02THk5dFlYQnpaWEpwWlhNdGRHbHNaWE5sZEhNdWN6TXVZVzFoZW05dVlYZHpMbU52YlM4eU5WOXBibU5vTDNsdmNtdHphR2x5WlM5dFpYUmhaR0YwWVM1cWMyOXUvanNvbg/wmts' --boundary='{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-1.1248,53.9711],[-1.0592,53.9711],[-1.0592,53.9569],[-1.1248,53.9569],[-1.1248,53.9711]]]}}' --zoom=16 --dst=data/test_imgs/sample_output/
         '''
 
-        wmts_handler = WMTSHandler(url=args.url, bounds=args.boundary, zoom=args.zoom, output_dir=output_dir, img_filename=img_id + '_stitched.png')
-        map_path = wmts_handler.process_wmts()
+        wmts_handler = WMTSHandler(url=args.url, bounds=args.boundary, zoom=args.zoom, output_dir=output_dir, img_filename=img_id + '_stitched.jpg')
+        map_path, tile_info = wmts_handler.process_wmts()
 
     if args.subcommand == 'iiif':
         '''
 time docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm --runtime=nvidia --gpus all  --workdir=/map-kurator map-kurator python model/predict_annotations.py iiif --url='https://map-view.nls.uk/iiif/2/12563%2F125635459/info.json' --dst=data/test_imgs/sample_output/
         '''
-        iiif_handler = IIIFHandler(args.url, output_dir, img_filename=img_id + '_stitched.png')
+        iiif_handler = IIIFHandler(args.url, output_dir, img_filename=img_id + '_stitched.jpg')
         map_path = iiif_handler.process_url()
 
     if args.subcommand == 'file':
@@ -240,6 +244,11 @@ time docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurat
         '''
         map_path = args.src
 
-    annotation_file = run_model(img_id, map_path, output_dir)
+
+    poly_list = run_model(img_id, map_path, output_dir)
+    write_annotation(img_id, output_dir, poly_list, tile_info = None)
+
+    map_id, output_dir, poly_list, tile_info 
+
     print("done")
     print(annotation_file)
