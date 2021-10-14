@@ -17,6 +17,8 @@ os.environ['CUDA_VISIBLE_DEVICES'] = ""
 import sys
 import tensorflow as tf
 
+import time
+
 print(tf.__file__)
 print(tf.__version__)
 
@@ -285,11 +287,20 @@ time docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurat
         '''
 time docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm --runtime=nvidia --gpus all  --workdir=/map-kurator map-kurator python model/predict_annotations.py iiif --url='https://map-view.nls.uk/iiif/2/12563%2F125635459/info.json' --dst=data/test_imgs/sample_output/
         '''
+        start_download = time.time()
         iiif_handler = IIIFHandler(args.url, output_dir, img_filename=img_id + '_stitched.jpg')
         map_path = iiif_handler.process_url()
 
+        end_download = time.time()
+
         poly_list = run_model(img_id, map_path, output_dir)
         annotation_file = write_annotation(img_id, output_dir, poly_list)
+
+        end_detection = time.time()
+
+        print('download time: ', end_download - start_download)
+        print('detection time: ', end_detection - end_download)
+        
 
     if args.subcommand == 'file':
         '''
