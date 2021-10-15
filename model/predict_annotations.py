@@ -10,6 +10,7 @@ from mymodel import model_U_VGG_Centerline_Localheight
 import cv2
 import numpy as np
 import json
+from shapely.geometry import Polygon
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 os.environ['CUDA_VISIBLE_DEVICES'] = ""
@@ -29,6 +30,7 @@ def run_model(map_id, map_path, output_dir):
     model.load_weights(saved_weights)
 
     map_img = cv2.imread(map_path)
+    #print(map_path)
     shift_size = 512
 
     base_name = os.path.basename(map_path)
@@ -139,9 +141,11 @@ def run_model(map_id, map_path, output_dir):
         poly = []
         for i in range(0, len(poly_str)):
             if i % 2 == 0:
-                poly.append([int(poly_str[i]), int(poly_str[i + 1])])
+                poly.append((int(poly_str[i]), int(poly_str[i + 1])))
 
-        poly_list.append(poly)
+        simple_poly = Polygon(poly).simplify(tolerance = 5, preserve_topology=False).exterior.coords[:] # tolerance is a hyper-param. Larger tolerance leads to fewer points
+        #poly_list.append(poly)
+        poly_list.append(simple_poly)
 
         # cv2.imwrite(output_path + 'prob_' + base_name[0:len(base_name) - 4] + '.jpg', prob_map_o)
         # cv2.imwrite(output_path + 'cent_' + base_name[0:len(base_name) - 4] + '.jpg', center_map_o)
@@ -201,7 +205,7 @@ def write_annotation(map_id, output_dir, poly_list, handler = None):
     # Generate web annotations: https://www.w3.org/TR/annotation-model/
     annotations = []
     for polygon in poly_list:
-        svg_polygon_coords = ' '.join([f"{x},{y}" for x, y in polygon])
+        svg_polygon_coords = ' '.join([f"{int(x)},{int(y)}" for x, y in polygon])
         annotation = {
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "id": "",
@@ -300,7 +304,7 @@ time docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurat
 
         print('download time: ', end_download - start_download)
         print('detection time: ', end_detection - end_download)
-        
+
 
     if args.subcommand == 'file':
         '''

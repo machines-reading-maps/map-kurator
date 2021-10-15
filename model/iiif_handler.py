@@ -160,5 +160,7 @@ class IIIFHandler:
 
     def _generate_url(self, x, y, w, h):
         bbox_str = ",".join([str(x), str(y), str(w), str(h)])
-        return self.url_prefix + f"/{bbox_str}/{self.tile_size}/{self.rotation}/{self.quality}.{self.img_format}"
+        return_url = self.url_prefix + f"/{bbox_str}/{self.tile_size}/{self.rotation}/{self.quality}.{self.img_format}"
+        #print(return_url)
+        return return_url
 
