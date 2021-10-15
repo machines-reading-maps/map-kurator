@@ -143,9 +143,12 @@ def run_model(map_id, map_path, output_dir):
             if i % 2 == 0:
                 poly.append((int(poly_str[i]), int(poly_str[i + 1])))
 
-        simple_poly = Polygon(poly).simplify(tolerance = 5, preserve_topology=False).exterior.coords[:] # tolerance is a hyper-param. Larger tolerance leads to fewer points
-        #poly_list.append(poly)
-        poly_list.append(simple_poly)
+        try:
+            simple_poly = Polygon(poly).simplify(tolerance = 5, preserve_topology=False).exterior.coords[:] # tolerance is a hyper-param. Larger tolerance leads to fewer points
+            #poly_list.append(poly)
+            poly_list.append(simple_poly)
+        except:
+            poly_list.append(poly)
 
         # cv2.imwrite(output_path + 'prob_' + base_name[0:len(base_name) - 4] + '.jpg', prob_map_o)
         # cv2.imwrite(output_path + 'cent_' + base_name[0:len(base_name) - 4] + '.jpg', center_map_o)
