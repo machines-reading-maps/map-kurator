@@ -180,6 +180,10 @@ def write_annotation(map_id, output_dir, poly_list, handler = None):
 
         latlon_poly_list = []
         for polygon in poly_list:
+            
+            if np.array(polygon).shape[0] == 0:
+                continue
+                
             # process each polygon 
             poly_x_list , poly_y_list = np.array(polygon)[:,0], np.array(polygon)[:,1] 
 
