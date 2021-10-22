@@ -74,6 +74,8 @@ scp {USER}@{VM_HOST}:~/finetune_map_model_map_w1e50_bsize8_w1_spe200_ep50.hdf5 d
 docker run -it -v $(pwd)/data/:/map-kurator/data -v $(pwd)/model:/map-kurator/model --rm  --workdir=/map-kurator map-kurator python model/predict_annotations.py wmts --url='https://wmts.maptiler.com/aHR0cDovL3dtdHMubWFwdGlsZXIuY29tL2FIUjBjSE02THk5dFlYQnpaWEpwWlhNdGRHbHNaWE5sZEhNdWN6TXVZVzFoZW05dVlYZHpMbU52YlM4eU5WOXBibU5vTDNsdmNtdHphR2x5WlM5dFpYUmhaR0YwWVM1cWMyOXUvanNvbg/wmts' --boundary='{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-1.1248,53.9711],[-1.0592,53.9711],[-1.0592,53.9569],[-1.1248,53.9569],[-1.1248,53.9711]]]}}' --zoom=16 --dst=data/test_imgs/sample_output/ --filename=sample_filename
 ```
 
+For WMTS, you can also choose to return the predicted polygons in the EPSG4326 coordinate system (lat, lng) by adding `--coord epsg4326` at the end of the above command.
+
 #### IIIF
 
 ```shell

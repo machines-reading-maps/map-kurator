@@ -202,7 +202,11 @@ def write_annotation(map_id, output_dir, poly_list, handler = None):
             # convert to EPSG:4326
             lat_list, lon_list = handler._tile2latlon_list(tile_x_list, tile_y_list)
 
-            latlon_poly = [[x,y] for x,y in zip(lat_list, lon_list)]
+            # x=long, y = lat. so need to flip 
+            #latlon_poly = [[x,y] for x,y in zip(lon_list, lat_list)]
+            latlon_poly = [["{:.6f}".format(x),"{:.6f}".format(y)] for x,y in zip(lon_list, lat_list)]
+
+
             latlon_poly_list.append(latlon_poly)
 
         poly_list = latlon_poly_list
@@ -212,15 +216,15 @@ def write_annotation(map_id, output_dir, poly_list, handler = None):
     # Generate web annotations: https://www.w3.org/TR/annotation-model/
     annotations = []
     for polygon in poly_list:
-        svg_polygon_coords = ' '.join([f"{int(x)},{int(y)}" for x, y in polygon])
+        svg_polygon_coords = ' '.join([f"{x},{y}" for x, y in polygon])
         annotation = {
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "id": "",
-            "body": [{
-                "type": "TextualBody",
-                "purpose": "tagging",
-                "value": "null"
-            }],
+            #"body": [{
+            #    "type": "TextualBody",
+            #    "purpose": "tagging",
+            #    "value": "null"
+            #}],
             "target": {
                 "selector": [{
                     "type": "SvgSelector",
