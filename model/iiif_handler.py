@@ -42,6 +42,7 @@ class IIIFHandler:
         self.img_width = response_dict['width']
         self.img_height = response_dict['height']
 
+
         if response_dict['profile'] is not None:
             profile_list = response_dict['profile']
             if type(profile_list) == list and len(profile_list) > 1:
@@ -52,9 +53,28 @@ class IIIFHandler:
                         print('set to native')
 
         if response_dict['tiles'] is not None:
+            #assert response_dict['tiles'][0]['width'] == response_dict['tiles'][0]['height']
+            #tile_size = response_dict['tiles'][0]['width']
+            #self.tile_size = str(tile_size) + ','
+
             tile_info = response_dict['tiles'][0]
             self.tile_width = tile_info['width']
             self.tile_height = tile_info['height']
+
+
+            assert self.tile_height == self.tile_width
+
+            try:
+                # probe once to decide the url format
+                probe_bbox_str = ",".join([str(0), str(0), str(self.tile_width), str(self.tile_height)]) 
+                probe_url = self.url_prefix + f"/{probe_bbox_str}/{self.tile_size}/{self.rotation}/{self.quality}.{self.img_format}"
+                probe_resp = requests.get(probe_url)
+                probe_img = np.asarray(bytearray(probe_resp.content), dtype=np.uint8)
+                _,_,_ = prob_img.shape # DO NOT delete this line. This line would cause an error and trigger the execption branch if url format is incorrect
+            except:
+                
+                self.tile_size = str(self.tile_height) + ','
+
 
             self._generate_tile_info()
             # pp.pprint(self.tile_info)
@@ -113,12 +133,21 @@ class IIIFHandler:
             print(f"downloading for key {str(tile_idx)} - {url}")
 
             resp = requests.get(url)
+            #print(url)
             img = np.asarray(bytearray(resp.content), dtype=np.uint8)
-            img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+
+            if img.shape[0] == 0: # empty image
+                continue 
+        
+            try:
+                img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+                img_height, img_width, img_depth = img.shape
+                print(img.shape)
+            except:
+                print('error geting shape of image', url)
+                exit(-1)
 
             # Pad width and height to multiples of self.tile_width and self.tile_height
-            img_height, img_width, img_depth = img.shape
-
             d_height = self.tile_height - img_height
             d_width = self.tile_width - img_width
             top = 0
@@ -149,7 +178,11 @@ class IIIFHandler:
         for idx in range(0, num_tiles_w):
             # paste the predicted probabilty maps to the output image
             for jdx in range(0, num_tiles_h):
+                if 'img' not in self.tile_info['tile_idxs'][(idx, jdx)]:
+                    continue 
+
                 img = self.tile_info['tile_idxs'][(idx, jdx)]['img']
+        
                 # print(f"img shape for ({idx}, {jdx}) - {img.shape}")
                 enlarged_map[jdx * self.tile_width:(jdx + 1) * self.tile_width, idx * self.tile_height:(idx + 1) * self.tile_height, :] = img
 
@@ -159,6 +192,7 @@ class IIIFHandler:
         return map_path
 
     def _generate_url(self, x, y, w, h):
+
         bbox_str = ",".join([str(x), str(y), str(w), str(h)])
         return_url = self.url_prefix + f"/{bbox_str}/{self.tile_size}/{self.rotation}/{self.quality}.{self.img_format}"
         #print(return_url)

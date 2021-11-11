@@ -1,2 +1,4 @@
 __pycache__
 .idea
+model/debug.py
+model/debug.txt
