@@ -59,11 +59,16 @@ class IIIFHandler:
 
             tile_info = response_dict['tiles'][0]
             self.tile_width = tile_info['width']
-            self.tile_height = tile_info['height']
+            # hack for sanborn maps
+            if 'height' in tile_info:
+                self.tile_height = tile_info['height']
+            else:
+                self.tile_height = tile_info['width']
 
 
             assert self.tile_height == self.tile_width
 
+            # hack for david rumsey maps
             try:
                 # probe once to decide the url format
                 probe_bbox_str = ",".join([str(0), str(0), str(self.tile_width), str(self.tile_height)]) 
@@ -143,21 +148,25 @@ class IIIFHandler:
                 img = cv2.imdecode(img, cv2.IMREAD_COLOR)
                 img_height, img_width, img_depth = img.shape
                 print(img.shape)
+
             except:
-                print('error geting shape of image', url)
+                print('Error processing tile, stopped', url)
                 exit(-1)
 
-            # Pad width and height to multiples of self.tile_width and self.tile_height
-            d_height = self.tile_height - img_height
-            d_width = self.tile_width - img_width
-            top = 0
-            bottom = d_height
-            left = 0
-            right = d_width
+            try:
+                # Pad width and height to multiples of self.tile_width and self.tile_height
+                d_height = self.tile_height - img_height
+                d_width = self.tile_width - img_width
+                top = 0
+                bottom = d_height
+                left = 0
+                right = d_width
 
-            img = cv2.copyMakeBorder(img.copy(), top, bottom, left, right, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+                img = cv2.copyMakeBorder(img.copy(), top, bottom, left, right, cv2.BORDER_CONSTANT, value=[0, 0, 0])
 
-            self.tile_info['tile_idxs'][tile_idx]['img'] = img
+                self.tile_info['tile_idxs'][tile_idx]['img'] = img
+            except:
+                print('Error making border, continued', url)
 
 
     def _generate_img(self):
