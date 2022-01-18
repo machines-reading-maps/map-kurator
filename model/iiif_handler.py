@@ -150,8 +150,8 @@ class IIIFHandler:
                 print(img.shape)
 
             except:
-                print('Error processing tile, stopped', url)
-                exit(-1)
+                print('Tile might be empty, skipped', url)
+                #exit(-1)
 
             try:
                 # Pad width and height to multiples of self.tile_width and self.tile_height
@@ -166,7 +166,7 @@ class IIIFHandler:
 
                 self.tile_info['tile_idxs'][tile_idx]['img'] = img
             except:
-                print('Error making border, continued', url)
+                print('Error making border, skipped', url)
 
 
     def _generate_img(self):
