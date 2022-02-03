@@ -57,8 +57,9 @@ This command should build the image from `Dockerfile` file in the current direct
 ls -lah data/l_weights/finetune_map_model_map_w1e50_bsize8_w1_spe200_ep50.hdf5 
 #> -rwxrwxr-x 1 danf danf 183M Jul  5 18:48 data/l_weights/finetune_map_model_map_w1e50_bsize8_w1_spe200_ep50.hdf5
 ```
-This file is over the size limit to be stored on github, hence the extra step
-If you are trying to run map-kurator locally and you have access to the VM (and the VM is running), you can download it to your machine:
+This file is over the size limit to be stored on github, hence you need to download it from [here](https://drive.google.com/file/d/1PW_wPZO54Cr5wPk44Uf8g5_gEN7UGReA/view?usp=sharing) and put it under `data/l_weights` folder.
+
+If you are trying to run map-kurator locally and you have access to the Turing VM (and the VM is running), you can download it to your machine:
 ```shell
 scp {USER}@{VM_HOST}:~/finetune_map_model_map_w1e50_bsize8_w1_spe200_ep50.hdf5 data/l_weights/finetune_map_model_map_w1e50_bsize8_w1_spe200_ep50.hdf5 
 
