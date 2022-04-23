@@ -1,5 +1,5 @@
 # map-kurator
-Wrapper around Zekun's model to detect and generate annotations around map labels
+Wrapper around Zekun's model to detect map text labels
 
 
 ## Installation
