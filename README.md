@@ -1,7 +1,7 @@
 # map-kurator
 Wrapper around Zekun's model to detect map text labels. 
 
-[UPDATE]: A more comprehensive pipeline that performs detection, recogntion, img-to-geocoordinate conversion and postOCR is available here: https://github.com/machines-reading-maps/mapkurator-system
+[**UPDATE 2022/10**]: A more comprehensive pipeline that performs detection, recogntion, img-to-geocoordinate conversion and postOCR is available here: https://github.com/machines-reading-maps/mapkurator-system
 
 
 ## Installation
