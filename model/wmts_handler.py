@@ -120,9 +120,9 @@ class WMTSHandler:
         enlarged_map = np.zeros((enlarged_height, enlarged_width, 3)).astype(np.uint8)
 
         # process tile by tile
-        for idx in range(0, num_tiles_w):
+        for idx in range(0, max(1,num_tiles_w)):
             # paste the predicted probabilty maps to the output image
-            for jdx in range(0, num_tiles_h):
+            for jdx in range(0, max(1,num_tiles_h)):
                 img = tile_info['tile_idxs'][(idx, jdx)]['img']
                 enlarged_map[jdx * shift_size:(jdx + 1) * shift_size, idx * shift_size:(idx + 1) * shift_size, :] = img
 
